@@ -1,0 +1,13 @@
+name: assignment-01
+title: assignment-01
+username:
+account: tofikmussa
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 2818363
+bundleId: 3633752
+url: https://tofikmussa.shinyapps.io/assignment-01/
+when: 1600227527.60304
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: .RData

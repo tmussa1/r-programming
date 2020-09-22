@@ -1,0 +1,13 @@
+name: assignment-02
+title: assignment-02
+username:
+account: tofikmussa
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 2818080
+bundleId: 3633621
+url: https://tofikmussa.shinyapps.io/assignment-02/
+when: 1600223168.05005
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: Capture.PNG|Capture2.PNG|Class 2 Hints.pdf
