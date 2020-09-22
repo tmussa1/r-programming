@@ -55,9 +55,11 @@ server <- function(session, input, output) {
   mtrace <<- invertibleMatrix[1,1] + invertibleMatrix[2,2] + invertibleMatrix[3,3]
   
   eigenConst = det(invertibleMatrix) %% 5;
-  eigenLam = (det(invertibleMatrix[-1, -1]) 
-  + det(invertibleMatrix[-2, -2]) + det(invertibleMatrix[-3, -3])) %% 5;
+  eigenLam = (det(invertibleMatrix[-1, -1]) + 
+                det(invertibleMatrix[-2, -2]) + 
+                det(invertibleMatrix[-3, -3])) %% 5;
   eigenLamSq = (-mtrace) %% 5;
+  eigenLamcub = 1 %% 5;
   
 }
 
