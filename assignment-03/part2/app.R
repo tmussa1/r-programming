@@ -108,6 +108,11 @@ server <- function(session, input, output) {
     
     output$eigvecout <- renderUI("")
     
+    output$cayleyout <- renderUI("")
+    
+    output$cayleyoutagain <- renderUI("")
+    
+    output$cayleyoutresult <- renderUI("")
     
   })
   
