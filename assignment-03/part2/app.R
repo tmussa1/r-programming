@@ -69,7 +69,24 @@ body <- dashboardBody(
                   HTML('<br/>'),
                   HTML('<br/>'),
                   HTML('<br/>'),
-                  uiOutput("eigvecout")
+                  uiOutput("eigvecout"),
+                  HTML('<br/>'),
+                  HTML('<br/>'),
+                  HTML('<br/>'),
+                  HTML('<br/>'),
+                  HTML('<br/>'),
+                  HTML('<br/>'),
+                  uiOutput("cayleyout"),
+                  HTML('<br/>'),
+                  HTML('<br/>'),
+                  HTML('<br/>'),
+                  HTML('<br/>'),
+                  uiOutput("cayleyoutagain"),
+                  HTML('<br/>'),
+                  HTML('<br/>'),
+                  HTML('<br/>'),
+                  HTML('<br/>'),
+                  uiOutput("cayleyoutresult")
           )
   )
 )
@@ -153,6 +170,52 @@ server <- function(session, input, output) {
     
   })
   
+  observeEvent(input$btncayley, {
+    
+   
+    coeficients <- calculateCoefficients();
+    
+    A3 <- (A%*%A%*%A) %% 5
+    
+    A2 <- (A%*%A) %% 5 
+    
+    res <- ((coeficients[1] * (A%*%A%*%A)) +
+       (coeficients[2] * (A%*%A)) + (coeficients[3] * A) + (coeficients[4] * diag(3))) %% 5
+    
+    output$cayleyout <- renderUI(
+        withTags(
+          table(
+            tr(
+              th(""),
+              th(jax.matrix(round(A3, digits = 2), name = "A^{3}")),
+              th(jax.matrix(round(A2, digits = 2), name = "A^{2}")),
+              th(jax.matrix(round(A, digits = 2), name = "A")),
+              th(jax.matrix(round(diag(3), digits = 2), name = "I"))
+            )
+      )))
+    
+    output$cayleyoutagain <- renderUI(
+      jaxD(
+        paste("A^3 *", 
+              round(coeficients[1], digits = 3),
+                "+`; A^2*", round(coeficients[2], digits = 3),
+              "+`; A*", round(coeficients[3], digits = 3),
+              "+`; I*", round(coeficients[4], digits = 3),
+              " = ")
+      )
+    )
+    
+    output$cayleyoutresult <- renderUI(
+      withTags(
+        table(
+          tr(
+            th(""),
+            th(jax.matrix(round(res, digits = 2), name = "result"))
+          )
+        ))
+    )
+  })
+  
   calculateCoefficients <- function(){
 
       constCoef <- round(((4 * det(A)) %% 5), 2)
@@ -233,9 +296,6 @@ server <- function(session, input, output) {
       return (result);
       
     }
-
-  ((coeficients[1] * (A%*%A%*%A)) +
-      (coeficients[2] * (A%*%A)) + (coeficients[3] * A) + (coeficients[4] * iden)) %% 5
   
 }
 
