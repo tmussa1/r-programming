@@ -1,4 +1,3 @@
-#Replace this line with the folder name of the app
 library(shiny)
 library(shinydashboard)
 library(shinyWidgets)
@@ -23,20 +22,12 @@ body <- dashboardBody(
            )
   )
 )
-ui <- dashboardPage(header, sidebar, body, skin = "green") #other colors available
-
-#Functions that implement the mathematics
-#This file must go into the same directory as app.R
-#source(".R")
-#Any images, audio, or stylesheet must go into a subfolder named www
-
-#Additional functions are OK here, but no variables
-
+ui <- dashboardPage(header, sidebar, body, skin = "green")
 
 server <- function(session, input, output) {
   
   # A <- matrix(sample(0:4, 9, replace = TRUE), nrow=3, ncol = 3)
-  A <- matrix(c(1,0,0,0,2,-0,0,0,3), byrow = T, nrow=3)
+  A <- matrix(c(1,0,0,0,2,0,0,0,3), byrow = T, nrow=3)
   A <- A %% 5
   A
   
@@ -73,57 +64,58 @@ server <- function(session, input, output) {
     }
     return (result);
   }
-  
-  length(findEigenValues());
- 
-  iden <- diag(3)
-  
+
   eigens <- findEigenValues();
   
-  lamI1 <- eigens[1] * iden
-  lamI1
+  findVector <- function (mat){
+    
+    columnSum <- colSums(mat)
+      
+    for(ind in (1 : length(columnSum))){
+      
+      if(columnSum[ind] > 0){
+        
+        print(mat[ ,ind])
+        
+        return (mat[ ,ind]);
+      }
+    }
+  }
   
-  lamI2 <- eigens[2] * iden
+  findEigenVectors <- function(){
+    
+    if(length(eigens) == 3){
+      
+      iden <<- diag(3);
+      
+      lamI1 <- (A - (eigens[1] * iden)) %% 5
+      lamI2 <- (A - (eigens[2] * iden)) %% 5
+      lamI3 <- (A - (eigens[3] * iden)) %% 5
+      
+      prodEigen <- (lamI2 %*% lamI3) %% 5
+      eigenVeg1 <- findVector(prodEigen);
+      print(prodEigen)
+      print(eigenVeg1)
+      
+      prodEigen2 <- (lamI1 %*% lamI3) %% 5
+      eigenVeg2 <- findVector(prodEigen2);
+      print(prodEigen2)
+      print(eigenVeg2)
+      
+      prodEigen3 <- (lamI1 %*% lamI2) %% 5
+      eigenVeg3 <- findVector(prodEigen3);
+      print(prodEigen3)
+      print(eigenVeg3)
+      
+    } else {
+      
+    }
+  }
   
-  lamI2
-  
-  lamI3 <- eigens[3] * iden
-  
-  lamI3
-  
-  prodEigen <- (lamI2 %*% lamI3) %% 5
-  
-  prodEigen <- cbind(prodEigen, c(0, 0, 0))
-  
-  prodEigen
-  
-  rref(prodEigen)
-  
-  prodEigen2 <- (lamI1 %*% lamI3) %% 5
-  
-  prodEigen2
-  
-  rref(prodEigen2)
-  
-  prodEigen2 <- cbind(prodEigen2, c(0, 0, 0))
-  
-  rref(prodEigen2)
-  
-  prodEigen3 <- (lamI1 %*% lamI2) %% 5
-  
-  prodEigen3 <- cbind(prodEigen3, c(0, 0, 0))
-  
-  rref(prodEigen3)
-  
-  mat <- matrix(c(3,4,3,2,1,3,2,1,4, 0, 0, 0), byrow = T, nrow=3)
-  mat
-  
-  rref(mat)
+  findEigenVectors();
   
   ((coeficients[1] * (A%*%A%*%A)) + 
       (coeficients[2] * (A%*%A)) + (coeficients[3] * A) + (coeficients[4] * iden)) %% 5
-  
-  
   
 }
 
