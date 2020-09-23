@@ -34,33 +34,42 @@ ui <- dashboardPage(header, sidebar, body, skin = "green") #other colors availab
 
 server <- function(session, input, output) {
   
-  findInvertibleMatrix <- function (){
+  A <- matrix(sample(0:4, 9, replace = TRUE), nrow=3, ncol = 3)
+  A
+  constCoef <- round(((4 * det(A)) %% 5), 2)
+  constCoef
+  lamCoef <- round(((4 * (-det(A[-2,-2]) - det(A[-3,-3]) - det(A[-1, -1]))) %% 5), 2)
+  lamCoef
+  
+  lamSqCoef <- round(((4 * (A[1, 1] + A[2, 2] + A[3, 3])) %% 5), 2)
+  lamSqCoef
+  lamCubCoef <- round(((4 * -1) %% 5), 2)
+  lamCubCoef
+  
+  findEigenValues <- function(){
     
-    repeat {
+    result <- c();
+    
+    for(x in 0:4){
       
-      m1 <<- matrix(sample(0:4, 9, replace = TRUE), nrow=3, ncol = 3)
+      temp <- round( (((lamCubCoef * (x ^ 3)) + (lamSqCoef * (x ^ 2)) 
+                     + (lamCoef * x) + constCoef)) %% 5, 2);
+      temp
       
-      mtrace <<- m1[1,1] + m1[2,2] + m1[3,3]
-      
-      mdisc <<- (mtrace ^ 2) - (4 *  det(m1))
-      
-      if(det(m1) > 0 & mtrace > 0 & mdisc > 0){
-        return (m1)
+      if(temp == 0){
+        result <- rbind(result, x);
       }
-    
+      
     }
+    return (result);
   }
   
-  invertibleMatrix <- findInvertibleMatrix()
-  mtrace <<- invertibleMatrix[1,1] + invertibleMatrix[2,2] + invertibleMatrix[3,3]
+  findEigenValues();
   
-  eigenConst = det(invertibleMatrix) %% 5;
-  eigenLam = (det(invertibleMatrix[-1, -1]) + 
-                det(invertibleMatrix[-2, -2]) + 
-                det(invertibleMatrix[-3, -3])) %% 5;
-  eigenLamSq = (-mtrace) %% 5;
-  eigenLamcub = 1 %% 5;
+  iden <- diag(3)
+  iden
   
+  ((lamCubCoef * (A%*%A%*%A)) + (lamSqCoef * (A%*%A)) + (lamCoef * A) + (constCoef * iden)) %% 5
 }
 
 #Run the app
