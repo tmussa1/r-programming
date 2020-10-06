@@ -1,7 +1,7 @@
 #s3calc.R
 
 makeS3data <- function(neutral) {
-  N <- 6
+  N <- 12
   DF <- data.frame(button=character(N),
                    perm =character(N),color=character(N),stringsAsFactors= FALSE)
   DF[1,] <- c("btnI","I",neutral)
