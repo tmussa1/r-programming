@@ -38,21 +38,10 @@ ui <- dashboardPage(
                        height = 100,
                        title = "Subgroups",
                        buttonRow2(
-                           inputIds = c("btnC2", "btnC3"),
-                           labels = c("Show C2", "Show C3"),
+                           inputIds = c("btnC3", "btnd3", "showv4", "showd6"),
+                           labels = c("Show C3", "Show D3", "Show V4", "Show D6"),
                            btnStyle = "padding:4px;font-size:150%"
                        )  #agb
-                   ),#box
-                   box(
-                     width = NULL,
-                     height = 120,
-                     title = "Generate a Subgroup",
-                     buttonRow4(
-                       inputIds = c("btnmarkgena", "btnmarkgenb", "btngen", "btnclear"),
-                       labels = list("Generator a", "Generator b","Generate","Clear"),
-                       btnStyle = "padding:4px;font-size:120%"
-                     ),  
-                     h4(uiOutput("genmsg"))
                    )
             ),  #col
             column(
@@ -70,9 +59,9 @@ ui <- dashboardPage(
             )
         ),  #fluid
         fluidRow(
-          column(width=12,
+          column(width=10,
                  box(width = NULL,
-                     height = 700,
+                     height = 500,
                      h3("Multiplication Table"),
                      tableOutput("multable")
                  )
@@ -179,12 +168,18 @@ server <- function(input, output, session) {
 
     }
     #Event handlers for all the element buttons 
-    observeEvent(input$btn123,{compute.and.show("(123)")})
-    observeEvent(input$btn132,{compute.and.show("(132)")})
-    observeEvent(input$btn12,{compute.and.show("(12)")})
-    observeEvent(input$btn13,{compute.and.show("(13)")})
-    observeEvent(input$btn23,{compute.and.show("(23)")})
     observeEvent(input$btnI,{compute.and.show("I")})
+    observeEvent(input$btnr,{compute.and.show("(123456)")})
+    observeEvent(input$btnrsquared,{compute.and.show("(135)(246)")})
+    observeEvent(input$btnrcubed,{compute.and.show("(14)(25)(36)")})
+    observeEvent(input$btnrtothe4th,{compute.and.show("(153)(264)")})
+    observeEvent(input$btnrtothe5th,{compute.and.show("(165432)")})
+    observeEvent(input$btnfix2and5,{compute.and.show("(13)(46)")})
+    observeEvent(input$btnfix1and4,{compute.and.show("(26)(35)")})
+    observeEvent(input$btnfix3and6,{compute.and.show("(15)(24)")})
+    observeEvent(input$btnflipy,{compute.and.show("(12)(36)(45)")})
+    observeEvent(input$btnflipz,{compute.and.show("(14)(23)(56)")})
+    observeEvent(input$btnflipoppositez,{compute.and.show("(16)(25)(34)")})
     #The reset button clears the output and reinitializes the product
     observeEvent(input$reset,{
         result.list <<- ""
@@ -202,62 +197,11 @@ server <- function(input, output, session) {
       mark.subgroup()
       showButtons()
     })
-    #Event handler for left cosets
-    observeEvent(input$btnLC,{
-        mark.subgroup()
-        idx = 1   #index into the color list -- one for each coset
-        #Keep creating cosets as long as there are elements that are still gray
-        while(length(which(S3DF$color == neutral) >0)){
-            #Find the first unassigned group element
-            in.coset <- which(S3DF$color == neutral)[1]
-            #Generate its left coset and put a new color on the buttons
-            for (j in 1:N) {
-              if(j %in% subgroup) {
-                element <- Perm.multiply(S3DF[in.coset,2],S3DF[j,2])
-                k <- which(S3DF[,2] == element)[1]
-                S3DF[k,3] <<- color.list[idx]
-              }
-            }
-            idx <- idx + 1
-        }
-        showButtons()
-    })
-    #Right cosets work the same way
-    observeEvent(input$btnRC,{
-        mark.subgroup()
-        idx = 1   #index into the color list -- one for each coset
-        #Keep creating cosets as long as there are elements that are still gray
-        while(length(which(S3DF$color == neutral) >0)){
-            #Find the first unassigned group element
-            in.coset <- which(S3DF$color == neutral)[1]
-            #Generate its left coset and put a new color on the buttons
-            for (j in 1:N) {
-              if(j %in% subgroup) {
-                  element <- Perm.multiply(S3DF[j,2],S3DF[in.coset,2])
-                  k <- which(S3DF[,2] == element)[1]
-                  S3DF[k,3] <<- color.list[idx]
-                }
-            }
-            idx <- idx + 1
-        }
-        showButtons()
-    })
     observeEvent(input$btnmark,{
       conjugating <<- TRUE
       output$conjmsg <- renderUI("Click the button for the desired element a")
     })
-    observeEvent(input$btnmarkgena,{
-      generating <<- 1
-      S3DF[,3] <<- rep(neutral,N)
-      showButtons()
-      output$genmsg <- renderUI("Click the button for generator a")
-    })
-    observeEvent(input$btnmarkgenb,{
-      generating <<- 2
-      S3DF[,3] <<- rep(neutral,N)
-      showButtons()
-      output$genmsg <- renderUI("Click the button for generator b")
-    })
+    
 #Generate random sequences of generators.
 #If we generate more than half the group, it's the entire group
 #This algorithm could turn out to be inefficient,and in principle it can fail
