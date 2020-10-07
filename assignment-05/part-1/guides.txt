@@ -1,0 +1,3 @@
+https://math.stackexchange.com/questions/2368437/dihedral-group-of-order-12-in-cycle-notation
+https://math.stackexchange.com/questions/1879626/subgroups-stabilizers-and-orbits-of-the-dihedral-group-d12-faster-way
+https://math.stackexchange.com/questions/2012509/subgroups-of-d-3

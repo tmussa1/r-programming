@@ -1,0 +1,12 @@
+name: part-2
+title: part-2
+username:
+account: tofikmussa
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 2951192
+bundleId: 3706758
+url: https://tofikmussa.shinyapps.io/part-2/
+when: 1601955423.25815
+asMultiple: FALSE
+asStatic: FALSE

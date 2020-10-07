@@ -1,0 +1,13 @@
+name: part-1
+title: part-1
+username:
+account: tofikmussa
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 2959320
+bundleId: 3710748
+url: https://tofikmussa.shinyapps.io/part-1/
+when: 1602032477.10964
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: guides.txt
