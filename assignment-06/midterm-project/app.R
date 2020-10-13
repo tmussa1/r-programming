@@ -75,12 +75,19 @@ server <- function(session, input, output) {
     output$covid_chart <- renderPlot(
       ggplot(data = selectedCountry,
              aes(x=factor(month), y=cases, fill=cases)) +
-        geom_bar(stat="identity", position = "dodge"))
+        geom_bar(stat="identity", position = "dodge") +
+      scale_size_area() + 
+      xlab("Months numbered 1 to 12") +
+      ylab("Cases"))
    
     output$covid_chart_deaths <- renderPlot(
       ggplot(data = selectedCountry,
              aes(x=factor(month), y=deaths, fill=deaths)) +
-        geom_bar(stat="identity", position = "dodge"))
+        geom_bar(stat="identity", position = "dodge") +
+      scale_size_area() + 
+      xlab("Months numbered 1 to 12") +
+      ylab("Deaths")
+  )
   })
 
 }
