@@ -1,0 +1,13 @@
+name: covid-graphs
+title: covid-graphs
+username:
+account: tofikmussa
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 3008758
+bundleId: 3736981
+url: https://tofikmussa.shinyapps.io/covid-graphs/
+when: 1602633504.45061
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: data/all-states-history.csv
