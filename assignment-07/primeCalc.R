@@ -72,4 +72,19 @@ prime.findCoPrimes <- function(num){
 
 prime.findCoPrimes(100)
 
+prime.findOrder <- function(num, base){
+  
+  order <- 1
+  
+  while(num != 1){
+    num = (num ^ order) %% base;
+    order = order + 1
+  }
+  
+  if(order == 1){
+    return (order)
+  }
+  
+  return (order - 1)
+}
 

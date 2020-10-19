@@ -1,6 +1,7 @@
 library(shiny)
 library(shinydashboard)
 library(shinyWidgets)
+library("tidyverse")
 source("primeCalc.R")
 stylesheet <- tags$head(tags$style(HTML('
     .main-header .logo {
@@ -32,6 +33,15 @@ body <- dashboardBody(
                tableOutput("multable")
            )
     )
+  ),
+  fluidRow(stylesheet,
+           column(width=12,
+                  box(width = NULL,
+                      height = 500,
+                      h3("Order Chart"),
+                      plotOutput("orderchart")
+                  )
+           )
   )
 )
 ui <- dashboardPage(header, sidebar, body, skin = "green") #other colors available
@@ -41,13 +51,32 @@ server <- function(session, input, output) {
   
   observeEvent(input$sliderpicker,{
     
-    tbl <- outer(as.integer(prime.findCoPrimes(input$sliderpicker)), 
-                 as.integer(prime.findCoPrimes(input$sliderpicker))) %% input$sliderpicker
+    tbl <- outer(as.integer(prime.findCoPrimes(input$sliderpicker), length = 0), 
+                 as.integer(prime.findCoPrimes(input$sliderpicker), length = 0)) %% as.integer(input$sliderpicker, length = 0)
     
-    colnames(tbl) <- as.integer(prime.findCoPrimes(input$sliderpicker))
-    rownames(tbl) <- as.integer(prime.findCoPrimes(input$sliderpicker))
+    colnames(tbl) <- as.integer(prime.findCoPrimes(input$sliderpicker), length = 0)
+    rownames(tbl) <- as.integer(prime.findCoPrimes(input$sliderpicker), length = 0)
     
-    output$multable <- renderTable(tbl,rownames = TRUE)
+    output$multable <- renderTable(tbl,rownames = TRUE, digits = 0)
+    
+    coprimes <- as.integer(prime.findCoPrimes(input$sliderpicker))
+    
+    coprimesorder <- c()
+    
+    for(val in coprimes){
+      order <- prime.findOrder(val, as.integer(input$sliderpicker))
+      coprimesorder <- cbind(coprimesorder, order)
+    }
+    
+    DF <- data.frame(coprimes = c(coprimes), orders =c(coprimesorder))
+    
+    output$orderchart <- renderPlot(
+      ggplot(data = DF,
+             aes(x=factor(coprimes), y=orders, fill=orders)) +
+        geom_bar(stat="identity", position = "dodge") +
+        scale_size_area() + 
+        xlab("Coprime Number") +
+        ylab("Order"))
   })
 
 }
