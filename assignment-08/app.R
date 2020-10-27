@@ -9,6 +9,9 @@ stylesheet <- tags$head(tags$style(HTML('
       font-weight: bold;
       font-size: 24px;
     }
+    #conclusion{
+      color : blue;
+    }
   ')
 ))
 
@@ -18,7 +21,7 @@ sidebar <- dashboardSidebar(disable = TRUE)
 body <- dashboardBody(
   fluidRow(stylesheet,
     column(width= 4,
-           actionBttn("btnfind","Click to see what gets generated")
+           actionBttn("btnfind","Click the buttons to see what gets generated")
     ),
     column(width= 8,
            actionBttn("btnfirst",jaxD("x^{2} + 2")),
@@ -31,8 +34,11 @@ body <- dashboardBody(
            actionBttn("btneighth",jaxD("x^{2} + 3x + 4")),
            actionBttn("btnninth",jaxD("x^{2} + 4x + 1")),
            actionBttn("btntenth",jaxD("x^{2} + 4x + 2")),
-           h3(uiOutput("list"))
-    )
+           h3(uiOutput("list")
+    ),
+    column(width = 6,
+           h3(uiOutput("conclusion"))
+          ))
   )
 )
 
@@ -64,47 +70,109 @@ server <- function(session, input, output) {
   
   observeEvent(input$btnfirst,{
     
-    res1 <- powerTable(5, 2, c(0,1,0),c(3,0))
+    res1 <- powerTable(5, 2, c(0,1),c(3,0))
     
     print(lapply(res1,convertPoly))
     
     output$list <- renderUI(h3(HTML(paste0(lapply(res1,convertPoly), sep="<br/>"))))
+    output$conclusion <- renderText("X is not a generator. It is not of order 25")
   })
   
   observeEvent(input$btnsecond,{
-    output$list <- renderUI("Hello")
+    
+    res1 <- powerTable(5, 2, c(0,1),c(2, 0))
+    
+    print(lapply(res1,convertPoly))
+    
+    output$list <- renderUI(h3(HTML(paste0(lapply(res1,convertPoly), sep="<br/>"))))
+    output$conclusion <- renderText("X is not a generator. It is not of order 25")
+    
   })
   
   observeEvent(input$btnthird,{
-    output$list <- renderUI("Hello")
+    
+    res1 <- powerTable(5, 2, c(0,1),c(4, 4))
+    
+    print(lapply(res1,convertPoly))
+    
+    output$list <- renderUI(h3(HTML(paste0(lapply(res1,convertPoly), sep="<br/>"))))
+    output$conclusion <- renderText("X is not a generator. It is not of order 25")
+    
   })
   
   observeEvent(input$btnfourth,{
-    output$list <- renderUI("Hello")
+    
+    res1 <- powerTable(5, 2, c(0,1),c(3, 4))
+    
+    print(lapply(res1,convertPoly))
+    
+    output$list <- renderUI(h3(HTML(paste0(lapply(res1,convertPoly), sep="<br/>"))))
+    output$conclusion <- renderText("X is a generator. It is of order 25")
   })
   
   observeEvent(input$btnfifth,{
-    output$list <- renderUI("Hello")
+    
+    res1 <- powerTable(5, 2, c(0,1),c(2,3))
+    
+    print(lapply(res1,convertPoly))
+    
+    output$list <- renderUI(h3(HTML(paste0(lapply(res1,convertPoly), sep="<br/>"))))
+    output$conclusion <- renderText("X is a generator. It is of order 25")
+    
   })
   
   observeEvent(input$btnsixth,{
-    output$list <- renderUI("Hello")
+    
+    res1 <- powerTable(5, 2, c(0,1),c(1,3))
+    
+    print(lapply(res1,convertPoly))
+    
+    output$list <- renderUI(h3(HTML(paste0(lapply(res1,convertPoly), sep="<br/>"))))
+    output$conclusion <- renderText("X is not a generator. It is not of order 25")
+    
   })
   
   observeEvent(input$btnseventh,{
-    output$list <- renderUI("Hello")
+    
+    res1 <- powerTable(5, 2, c(0,1),c(2,2))
+    
+    print(lapply(res1,convertPoly))
+    
+    output$list <- renderUI(h3(HTML(paste0(lapply(res1,convertPoly), sep="<br/>"))))
+    output$conclusion <- renderText("X is a generator. It is of order 25")
+    
   })
   
   observeEvent(input$btneighth,{
-    output$list <- renderUI("Hello")
+    
+    res1 <- powerTable(5, 2, c(0,1),c(1,2))
+    
+    print(lapply(res1,convertPoly))
+    
+    output$list <- renderUI(h3(HTML(paste0(lapply(res1,convertPoly), sep="<br/>"))))
+    output$conclusion <- renderText("X is not a generator. It is not of order 25")
   })
   
   observeEvent(input$btnninth,{
-    output$list <- renderUI("Hi")
+    
+    res1 <- powerTable(5, 2, c(0,1),c(4,1))
+    
+    print(lapply(res1,convertPoly))
+    
+    output$list <- renderUI(h3(HTML(paste0(lapply(res1,convertPoly), sep="<br/>"))))
+    output$conclusion <- renderText("X is not a generator. It is not of order 25")
+    
   })
   
   observeEvent(input$btntenth,{
-    output$list <- renderUI("Hello")
+    
+    res1 <- powerTable(5, 2, c(0,1),c(3,1))
+    
+    print(lapply(res1,convertPoly))
+    
+    output$list <- renderUI(h3(HTML(paste0(lapply(res1,convertPoly), sep="<br/>"))))
+    output$conclusion <- renderText("X is a generator. It is of order 25")
+    
   })
 }
 
