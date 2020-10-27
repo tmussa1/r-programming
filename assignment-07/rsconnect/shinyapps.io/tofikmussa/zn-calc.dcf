@@ -1,0 +1,13 @@
+name: zn-calc
+title: zn-calc
+username:
+account: tofikmussa
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 3044729
+bundleId: 3756194
+url: https://tofikmussa.shinyapps.io/zn-calc/
+when: 1603068057.30496
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: sample/app.R|sample/gcdcalc.R
