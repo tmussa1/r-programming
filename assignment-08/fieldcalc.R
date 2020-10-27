@@ -17,7 +17,7 @@ convertPoly <- function(coeff, carats = TRUE) {
     n <- n-1
   }
   if (tail(v,1)=="+") v <- head(v,-1)
-  return(paste(v,sep="\n"))
+  return(paste(v,sep="",collapse=""))
 }
 
 #Computes all the powers of a generator, which must be a constant or x
