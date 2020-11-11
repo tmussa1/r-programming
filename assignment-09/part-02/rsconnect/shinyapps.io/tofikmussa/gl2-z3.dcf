@@ -5,8 +5,8 @@ account: tofikmussa
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 3155460
-bundleId: 3816908
+bundleId: 3816982
 url: https://tofikmussa.shinyapps.io/gl2-z3/
-when: 1604435036.32158
+when: 1604436451.37754
 asMultiple: FALSE
 asStatic: FALSE

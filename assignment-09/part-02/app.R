@@ -73,7 +73,9 @@ body <- dashboardBody(
       uiOutput("power8"),
       uiOutput("power9"),
       uiOutput("power10"),
+      uiOutput("power11"),
       uiOutput("power12"),
+      uiOutput("power16"),
       uiOutput("power20"),
       uiOutput("power24")
     )
@@ -105,7 +107,9 @@ server <- function(session, input, output) {
     output$power8 <- renderUI("")
     output$power9 <- renderUI("")
     output$power10 <- renderUI("")
+    output$power11 <- renderUI("")
     output$power12 <- renderUI("")
+    output$power16 <- renderUI("")
     output$power20 <- renderUI("")
     output$power24 <- renderUI("")
     output$perm <- renderUI("")
@@ -152,8 +156,12 @@ server <- function(session, input, output) {
     
     B10 <- Z3MatProd(B4,B4)
     output$power10 <- renderUI({jax.matrix(B10, name = "A^{10}")})
+    B11 <- Z3MatProd(A,B10)
+    output$power11 <- renderUI({jax.matrix(B11, name = "A^{11}")})
     B12 <- Z3MatProd(B5,B5)
     output$power12 <- renderUI({jax.matrix(B12, name = "A^{12}")})
+    B16 <- Z3MatProd(B7,B7)
+    output$power16 <- renderUI({jax.matrix(B16, name = "A^{16}")})
     B20 <- Z3MatProd(B10,B10)
     output$power20 <- renderUI({jax.matrix(B20, name = "A^{20}")})
     B24 <- Z3MatProd(B12,B12)

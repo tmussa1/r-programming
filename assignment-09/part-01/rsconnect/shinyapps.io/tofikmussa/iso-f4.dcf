@@ -1,0 +1,12 @@
+name: iso-f4
+title: iso-f4
+username:
+account: tofikmussa
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 3156079
+bundleId: 3817203
+url: https://tofikmussa.shinyapps.io/iso-f4/
+when: 1604440856.7509
+asMultiple: FALSE
+asStatic: FALSE
