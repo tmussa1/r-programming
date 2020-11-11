@@ -39,6 +39,7 @@ body <- dashboardBody(
            tableOutput("tbl2"))
   )
 )
+
 ui <- dashboardPage(header, sidebar, body, skin = "green") #other colors available
 
 #Functions that implement the mathematics
@@ -46,7 +47,6 @@ ui <- dashboardPage(header, sidebar, body, skin = "green") #other colors availab
 #source(".R")
 
 #Additional functions are OK here, but no variables
-mtcars
 
 server <- function(session, input, output) {
   output$tbl <- renderTable(mtcars)

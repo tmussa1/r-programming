@@ -1,0 +1,12 @@
+name: sat-scores-2008
+title: sat-scores-2008
+username:
+account: tofikmussa
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 3212788
+bundleId: 3848972
+url: https://tofikmussa.shinyapps.io/sat-scores-2008/
+when: 1605127659.19287
+asMultiple: FALSE
+asStatic: FALSE
