@@ -5,9 +5,9 @@ account: tofikmussa
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 3110657
-bundleId: 3790365
+bundleId: 3849264
 url: https://tofikmussa.shinyapps.io/conformal-matrices/
-when: 1603857778.50715
+when: 1605133261.55973
 asMultiple: FALSE
 asStatic: FALSE
 ignoredFiles: ffcalc/.RData|ffcalc/.Rhistory|ffcalc/app.R|ffcalc/fieldcalc.R|irreducible/app.R|part-02/app.R|part-02/fieldcalc.R|part-02/jaxmat.R

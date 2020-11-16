@@ -212,7 +212,12 @@ server <- function(session, input, output) {
     deterInv <- 3 - (det(B) %% 3)
     inv <- (matrix(c(B[2, 2], -B[2, 1], -B[1, 2], B[1, 1]), nrow =2, ncol =2) * deterInv) %% 3
     
-    divide <- (inv %*% A) %% 3
+    if(A == B){
+      divide <<- matrix(c(1, 0, 0, 1), ncol = 2)
+    } else {
+      divide <<- (inv %*% A) %% 3
+    }
+    
     output$adividedb <- renderUI(jax.matrix(divide))
   })
 }
