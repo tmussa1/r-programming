@@ -40,7 +40,7 @@ body <- dashboardBody(
             fluidRow(stylesheet,
                      column(width = 3,
                             radioButtons("profileanalysis", "Types of Analysis",
-                                         choiceNames = c("Contingency Table","Correlation Graph between Different Google Search Words"),
+                                         choiceNames = c("Contingency Table between Region and Personality Type","Correlation Graph between Different Google Search Words"),
                                          choiceValues = c("profilecont", "profilecorr")),
                             actionBttn("profileanalyze","Analyze"),
                             br(),
@@ -58,6 +58,7 @@ body <- dashboardBody(
                      ),
                      column(width = 9,
                             plotOutput("profilegraph"),
+                            tableOutput("profileconttable"),
                             br(),
                             br(),
                             verbatimTextOutput("profiletext")
@@ -81,6 +82,7 @@ ui <- dashboardPage(header, sidebar, body, skin = "green") #other colors availab
 
 server <- function(session, input, output) {
  
+  ########################################################### - Correlation 
   profileType <- "profilecont"
   factor1 <- 0
   factor2 <- 0
@@ -94,23 +96,6 @@ server <- function(session, input, output) {
     profileType <<- input$profileanalysis
   })
   
-  observeEvent(input$profileanalyze,{
-    
-    if(profileType == "profilecorr"){
-      
-      output$profilegraph <- renderPlot(profileDfSubset %>%
-        cor() %>%
-        corrplot(
-          type   = "upper",     
-          diag   = F,         
-          order  = "original",
-          tl.col = "black",   
-          tl.srt = 45   
-        ))
-      # print(profileDfSubset %$% cor.test(instagram, privacy))
-    }
-  })
-  
   observeEvent(input$profilecorranalyze,{
    
     factor1 <<- input$selectprofile1
@@ -120,8 +105,63 @@ server <- function(session, input, output) {
     factor2 <<- profileDf %>% pull(factor2)
     
     profilecorr <<- cor.test(factor1,factor2)
+    
+    output$profileconttable <- NULL
+    
+    output$profilegraph <- NULL
       
     output$profiletext <- renderText({paste(profilecorr, sep="\n")})
+  })
+  
+  ################################################## - COntingency
+  
+  profileDfContingent <- profileDf[, c(2, 3, 5)]
+  
+
+  profileDfContingent <- profileDfContingent %>%
+  mutate(
+    psychRegions = as.factor(psychRegions),
+    psychRegions = fct_recode(psychRegions,
+                              "Friendly" = "Friendly and Conventional",
+                              "Relaxed" = "Relaxed and Creative",
+                              "Temperamental" = "Temperamental and Uninhibited"
+    )
+  )
+  # profileDfContingent
+  
+  profileDfContingent <- profileDfContingent %>%
+    dplyr::select(region, psychRegions) %>%
+    table() %>% prop.table(1) %>% 
+    round(2) %>%    
+    `*`(100) 
+  
+  # profileDfContingent
+  
+  observeEvent(input$profileanalyze,{
+    
+    if(profileType == "profilecorr"){
+      
+      output$profileconttable <- NULL
+      
+      output$profilegraph <- renderPlot(profileDfSubset %>%
+                                          cor() %>%
+                                          corrplot(
+                                            type   = "upper",     
+                                            diag   = F,         
+                                            order  = "original",
+                                            tl.col = "black",   
+                                            tl.srt = 45   
+                                          ))
+    } else if(profileType == "profilecont"){
+      
+      output$profilegraph <- NULL
+      
+      output$profileconttable <- renderTable({as.data.frame.matrix(profileDfContingent)}, include.rownames=TRUE)
+      
+      print(class(profileDfContingent))
+      
+      # xtabs(as.formula(paste0("~",input$rowvar,"+",input$colum)), s())
+    }
   })
 }
 

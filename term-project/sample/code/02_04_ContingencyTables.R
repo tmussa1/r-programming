@@ -21,7 +21,7 @@ pacman::p_load(magrittr, pacman, rio, tidyverse)
 # Save categorical variables and shorten factor labels
 df <- import("data/StateData.xlsx") %>%
   as_tibble() %>%
-  select(state_code, region, psychRegions) %>%
+  dplyr::select(state_code, region, psychRegions) %>%
   mutate(
     psychRegions = as.factor(psychRegions),
     psychRegions = fct_recode(psychRegions,
@@ -36,7 +36,7 @@ df <- import("data/StateData.xlsx") %>%
 
 # Create contingency table "ct"
 ct <- df %>%
-  select(region, psychRegions) %>%
+  dplyr::select(region, psychRegions) %>%
   table() %>%
   print()
 
