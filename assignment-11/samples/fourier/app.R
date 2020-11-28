@@ -2,7 +2,7 @@
 library(shiny)
 library(shinydashboard)
 library(shinyWidgets)
-library(resampledata)   #datasets to accompany Chihara and Hesterberg
+library(MASS)   #datasets to accompany Chihara and Hesterberg
 stylesheet <- tags$head(tags$style(HTML('
     .main-header .logo {
       font-family: "Georgia", Times, "Times New Roman", serif;
@@ -59,6 +59,8 @@ source("fcalc.R")
 
 #Additional functions are OK here, but no variables
 
+cer <- get("accdeaths")
+cer
 
 server <- function(session, input, output) {
   havecoeff <- FALSE

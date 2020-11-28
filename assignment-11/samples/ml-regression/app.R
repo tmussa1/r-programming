@@ -13,6 +13,7 @@ stylesheet <- tags$head(tags$style(HTML('
 ))
 #Load the dataset
 CER <- read.csv("cereal.csv")
+# crime.xlsx
 dset <- subset(CER,TRUE,select=c(name,calories,sodium,fiber,protein, fat,sugars,rating))
 
 

@@ -1,0 +1,12 @@
+name: employee-attitude
+title: employee-attitude
+username:
+account: tofikmussa
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 3254721
+bundleId: 3873982
+url: https://tofikmussa.shinyapps.io/employee-attitude/
+when: 1605663010.35679
+asMultiple: FALSE
+asStatic: FALSE

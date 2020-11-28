@@ -1,0 +1,12 @@
+name: death-reasons
+title: death-reasons
+username:
+account: tofikmussa
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 3255432
+bundleId: 3874354
+url: https://tofikmussa.shinyapps.io/death-reasons/
+when: 1605671579.40148
+asMultiple: FALSE
+asStatic: FALSE

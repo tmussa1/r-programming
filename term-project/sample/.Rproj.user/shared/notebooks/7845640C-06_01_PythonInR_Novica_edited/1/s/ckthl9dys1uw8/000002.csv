@@ -1,0 +1,13 @@
+"0","pacman::p_load(datasets, magrittr, pacman, rio, tidyverse, reticulate)"
+"2","also installing the dependency ‘rappdirs’
+
+"
+"2","cannot open URL 'https://cran.rstudio.com/bin/macosx/el-capitan/contrib/3.6/PACKAGES.rds': HTTP status was '404 Not Found'"
+"1","
+"
+"1",""
+"1","  There is a binary version available but the source version is
+  later"
+"1",""
+"1",":
+"
