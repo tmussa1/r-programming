@@ -143,6 +143,8 @@ server <- function(session, input, output) {
       
       output$profileconttable <- NULL
       
+      output$profiletext <- NULL
+      
       output$profilegraph <- renderPlot(profileDfSubset %>%
                                           cor() %>%
                                           corrplot(
@@ -155,6 +157,8 @@ server <- function(session, input, output) {
     } else if(profileType == "profilecont"){
       
       output$profilegraph <- NULL
+      
+      output$profiletext <- NULL
       
       output$profileconttable <- renderTable({as.data.frame.matrix(profileDfContingent)}, include.rownames=TRUE)
       
