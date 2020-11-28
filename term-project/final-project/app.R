@@ -40,13 +40,16 @@ body <- dashboardBody(
             fluidRow(stylesheet,
                      column(width = 3,
                             radioButtons("profileanalysis", "Types of Analysis",
-                                         choiceNames = c("Contingency Table between Region and Personality Type","Correlation Graph between Different Google Search Words"),
-                                         choiceValues = c("profilecont", "profilecorr")),
+                                         choiceNames = c("Contingency Table between US Regions and Personality Type",
+                                                         "Correlation Graph between Different Google Search Words",
+                                                         "Boxplot for Entrepreneurship",
+                                                         "Chi-Square Test between US Regions and Personality Type"),
+                                         choiceValues = c("profilecont", "profilecorr", "profileboxplot", "profilechi")),
                             actionBttn("profileanalyze","Analyze"),
                             br(),
                             br(),
                             br(),
-                            selectInput("selectprofile1","Pick a Predictor to Run Correlation Test between Search Words",
+                            selectInput("selectprofile1","Pick a Predictor to Run Correlation t Test between Search Words",
                             choices = c("instagram","facebook","retweet","entrepreneur","gdpr","privacy",
                                         "university", "mortgage", "volunteering", "museum", "scrapbook"),
                             ),
@@ -54,7 +57,7 @@ body <- dashboardBody(
                                         choices = c("instagram","facebook","retweet","entrepreneur","gdpr","privacy",
                                                     "university", "mortgage", "volunteering", "museum", "scrapbook"),
                             ),
-                            actionBttn("profilecorranalyze","Run a Correlation Test between Your Picks")
+                            actionBttn("profilecorranalyze","Run a t Test between Your Picks")
                      ),
                      column(width = 9,
                             plotOutput("profilegraph"),
@@ -82,7 +85,7 @@ ui <- dashboardPage(header, sidebar, body, skin = "green") #other colors availab
 
 server <- function(session, input, output) {
  
-  ########################################################### - Correlation 
+  ########################################################### - profile Correlation 
   profileType <- "profilecont"
   factor1 <- 0
   factor2 <- 0
@@ -113,7 +116,7 @@ server <- function(session, input, output) {
     output$profiletext <- renderText({paste(profilecorr, sep="\n")})
   })
   
-  ################################################## - COntingency
+  ################################################## - profile COntingency
   
   profileDfContingent <- profileDf[, c(2, 3, 5)]
   
@@ -127,15 +130,12 @@ server <- function(session, input, output) {
                               "Temperamental" = "Temperamental and Uninhibited"
     )
   )
-  # profileDfContingent
   
   profileDfContingent <- profileDfContingent %>%
     dplyr::select(region, psychRegions) %>%
     table() %>% prop.table(1) %>% 
     round(2) %>%    
     `*`(100) 
-  
-  # profileDfContingent
   
   observeEvent(input$profileanalyze,{
     
@@ -144,6 +144,8 @@ server <- function(session, input, output) {
       output$profileconttable <- NULL
       
       output$profiletext <- NULL
+      
+      output$profilegraph <- NULL
       
       output$profilegraph <- renderPlot(profileDfSubset %>%
                                           cor() %>%
@@ -160,11 +162,49 @@ server <- function(session, input, output) {
       
       output$profiletext <- NULL
       
-      output$profileconttable <- renderTable({as.data.frame.matrix(profileDfContingent)}, include.rownames=TRUE)
+      output$profileconttable <- NULL
+        
+      output$profileconttable <- renderTable({as.data.frame.matrix(profileDfContingent)}, 
+                                             include.rownames=TRUE)
       
       print(class(profileDfContingent))
       
-      # xtabs(as.formula(paste0("~",input$rowvar,"+",input$colum)), s())
+    } else if(profileType == "profileboxplot"){
+      
+      output$profilegraph <- NULL
+      
+      output$profiletext <- NULL
+      
+      output$profileconttable <- NULL
+      
+      output$profilegraph <- renderPlot(profileDf %>%
+                                          dplyr::select(entrepreneur) %>%
+                                          ggplot(., aes(y = entrepreneur, x = 1)) +
+                                          geom_boxplot(notch = TRUE) +  # Boxplot with CI
+                                          coord_flip())
+    } else if(profileType == "profilechi"){
+      
+      output$profilegraph <- NULL
+      
+      output$profiletext <- NULL
+      
+      output$profileconttable <- NULL
+      
+      profileSubset <- profileDf %>% dplyr::select(state_code, region, psychRegions) %>%
+        mutate(
+          psychRegions = as.factor(psychRegions),
+          psychRegions = fct_recode(psychRegions,
+                                    "Friendly" = "Friendly and Conventional",
+                                    "Relaxed" = "Relaxed and Creative",
+                                    "Temperamental" = "Temperamental and Uninhibited"
+          )
+        ) 
+      
+      profilechi <- profileSubset %>% dplyr::select(region, psychRegions) %>%
+        table() %>% chisq.test()
+      
+      output$profiletext <- renderText({paste(profilechi, sep="\n")})
+      
     }
   })
 }

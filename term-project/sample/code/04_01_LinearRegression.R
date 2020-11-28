@@ -22,7 +22,7 @@ pacman::p_load(GGally, magrittr, pacman, rio, tidyverse)
 # Save Google Correlate variables
 df <- import("data/StateData.xlsx") %>%
   as_tibble() %>%
-  select(instagram:modernDance) %>% 
+  dplyr::select(instagram:modernDance) %>% 
   print()
 
 # EXPLORE DATA #############################################
@@ -40,7 +40,7 @@ df %>%
 
 # Compute and save bivariate regression
 fit1 <- df %>%                      # Save as "fit1"
-  select(volunteering, museum) %>%  # y, then x
+  dplyr::select(volunteering, museum) %>%  # y, then x
   lm()                              # Linear model
 
 # Show model
@@ -74,7 +74,7 @@ fit1 %>% plot()
 # Moving the outcome to the front and removing all unneeded
 # variables can make things easier
 df %<>%            # Compound assignment pipe; overwrites df
-  select(
+  dplyr::select(
     volunteering,  # Outcome variable selected first
     everything()   # Selects all other variables in df
   ) %>%
