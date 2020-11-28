@@ -5,7 +5,7 @@ source("jaxmat.R")
 
 if (!require("pacman")) install.packages("pacman")
 
-pacman::p_load(corrplot, magrittr, pacman, rio, tidyverse)
+pacman::p_load(corrplot, magrittr, pacman, psych, rio, tidyverse)
 
 stylesheet <- tags$head(tags$style(HTML('
     .main-header .logo {
@@ -40,11 +40,21 @@ body <- dashboardBody(
             fluidRow(stylesheet,
                      column(width = 3,
                             radioButtons("profileanalysis", "Types of Analysis",
-                                         choiceNames = c("Contingency Table between US Regions and Personality Type",
+                                         choiceNames = c(
                                                          "Correlation Graph between Different Google Search Words",
-                                                         "Boxplot for Entrepreneurship",
-                                                         "Chi-Square Test between US Regions and Personality Type"),
-                                         choiceValues = c("profilecont", "profilecorr", "profileboxplot", "profilechi")),
+                                                         "Box plot for Personality Types (Psychology Regions) Vs Volunteering Search Word",
+                                                         "Box plot for Entrepreneurship Search Word",
+                                                         "Bar plot for Count of Personality Types (Psychology Regions)", 
+                                                         "Density plot for Personality Types (Psychology Regions) Vs Volunteering Search Word",
+                                                         "One-way Analysis of Variance for Personality Types (Psychology Regions) Vs Volunteering Search Word",
+                                                         "Pairwise t Test for Personality Types (Psychology Regions) Vs Volunteering Search Word",
+                                                         "Contingency Table between US Regions and Personality Type (Psychology Region)",
+                                                         "Chi-Square Test between US Regions and Personality Type (Psychology Region)"),
+                                         choiceValues = c("profilecorr",
+                                                          "profileboxplotpsych", "profileboxplot",
+                                                          "profilebarplot", "profiledensity",
+                                                          "profileanova","profilepairwisettest", "profilecont", "profilechi"
+                                                          )),
                             actionBttn("profileanalyze","Analyze"),
                             br(),
                             br(),
@@ -105,7 +115,7 @@ ui <- dashboardPage(header, sidebar, body, skin = "green") #other colors availab
 
 server <- function(session, input, output) {
  
-  ########################################################### - profile Correlation 
+  ########################################################### - profile 
   profileType <- "profilecont"
   factor1 <- 0
   factor2 <- 0
@@ -114,6 +124,21 @@ server <- function(session, input, output) {
     as_tibble()
   
   profileDfSubset <- profileDf[, 11:22]
+  
+  profileAnova <-  profileDf %>%
+    select(
+      state_code, 
+      psychRegions,
+      instagram:modernDance
+    ) %>% 
+    mutate(
+      psychRegions = as.factor(psychRegions),
+      psychRegions = fct_recode(psychRegions,
+                                "Friendly" = "Friendly and Conventional",
+                                "Relaxed" = "Relaxed and Creative",
+                                "Temperamental" = "Temperamental and Uninhibited"
+      )
+    )
   
   observeEvent(input$profileanalysis,{
     profileType <<- input$profileanalysis
@@ -129,6 +154,7 @@ server <- function(session, input, output) {
     
     profilecorr <<- cor.test(factor1,factor2)
     
+    clearProfile()
     
     output$profiletext <- renderText({paste(profilecorr, sep="\n")})
   })
@@ -151,8 +177,6 @@ server <- function(session, input, output) {
     
     output$profilechiresidtext <- NULL
   }
-  
-  ################################################## - profile COntingency
   
   profileDfContingent <- profileDf[, c(2, 3, 5)]
   
@@ -191,7 +215,7 @@ server <- function(session, input, output) {
       
       clearProfile()
         
-      output$profileconttable <- renderTable({as.data.frame.matrix(profileDfContingent)}, 
+      output$profilechiexpec <- renderTable({as.data.frame.matrix(profileDfContingent)}, 
                                              include.rownames=TRUE)
       
     } else if(profileType == "profileboxplot"){
@@ -232,6 +256,79 @@ server <- function(session, input, output) {
       output$profilechiresidtext <- renderText({paste("<b>", "Residuals", "</b>")})
       
       output$profiletext <- renderText({paste(profilechi, sep="\n")})
+      
+    } else if(profileType == "profileboxplotpsych"){
+      
+      profileAnovaBox <- profileAnova %>%
+        ggplot(
+          aes(
+            x    = psychRegions,
+            y    = volunteering,
+            fill = psychRegions 
+          )
+        ) + 
+        geom_boxplot() +
+        coord_flip() +
+        xlab("") +
+        theme(legend.position = "none")
+      
+      clearProfile()
+      
+      output$profilegraph <- renderPlot(profileAnovaBox)
+      
+    } else if(profileType == "profilebarplot"){
+      
+      profileAnovaBar <- profileAnova %>% ggplot() + 
+        geom_bar(
+          aes(
+            x    = psychRegions,
+            fill = psychRegions
+          )
+        ) + 
+        theme(legend.position = "none")
+      
+      clearProfile()
+      
+      output$profilegraph <- renderPlot(profileAnovaBar)
+      
+    } else if(profileType == "profiledensity"){
+      
+      profileAnovaDensity <- profileAnova %>%
+        ggplot(
+          aes(
+            x    = volunteering,
+            fill = psychRegions 
+          )
+        ) + 
+        geom_density(alpha = 0.5) +
+        theme(legend.position = "bottom")
+      
+      clearProfile()
+      
+      output$profilegraph <- renderPlot(profileAnovaDensity)
+      
+    } else if(profileType == "profileanova"){
+      
+      profileAnovaAnova <- profileAnova %>% aov(
+        volunteering ~ psychRegions,  # "as a function of"
+        data = .
+      ) %>% summary()
+      
+      clearProfile()
+      
+      output$profiletext <- renderText({paste(profileAnovaAnova, sep="\n")})
+      
+    } else if(profileType == "profilepairwisettest"){
+      
+      profileAnovaPairwise <- pairwise.t.test(
+        profileAnova$volunteering,
+        profileAnova$psychRegions,
+        p.adj = "bonf"  
+      )
+      
+      clearProfile()
+      
+      output$profiletext <- renderText({paste(profileAnovaPairwise, sep="\n")})
     }
   })
 }
