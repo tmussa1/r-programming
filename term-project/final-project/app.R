@@ -61,13 +61,33 @@ body <- dashboardBody(
                      ),
                      column(width = 9,
                             plotOutput("profilegraph"),
-                            tableOutput("profileconttable"),
                             br(),
                             br(),
                             verbatimTextOutput("profiletext")
                      )
                      
-            ),
+            ), 
+            
+            fluidRow(stylesheet,
+                        column(width = 4,
+                               br(),
+                               br(),
+                               htmlOutput("profilechiobservedtext"),
+                               tableOutput("profileconttable")
+                        ),
+                        column(width = 4,
+                               br(),
+                               br(),
+                               htmlOutput("profilechiexpectext"),
+                               tableOutput("profilechiexpec")
+                        ),
+                        column(width = 4,
+                               br(),
+                               br(),
+                               htmlOutput("profilechiresidtext"),
+                               tableOutput("profilechiresid")
+                        )
+            )
             
     ),
     tabItem(tabName = "lung",
@@ -109,18 +129,33 @@ server <- function(session, input, output) {
     
     profilecorr <<- cor.test(factor1,factor2)
     
-    output$profileconttable <- NULL
     
-    output$profilegraph <- NULL
-      
     output$profiletext <- renderText({paste(profilecorr, sep="\n")})
   })
+  
+  clearProfile <- function() {
+    
+    output$profileconttable <- NULL
+    
+    output$profiletext <- NULL
+    
+    output$profilegraph <- NULL
+    
+    output$profilechiexpec <- NULL
+    
+    output$profilechiresid <- NULL
+    
+    output$profilechiobservedtext <- NULL
+    
+    output$profilechiexpectext <- NULL
+    
+    output$profilechiresidtext <- NULL
+  }
   
   ################################################## - profile COntingency
   
   profileDfContingent <- profileDf[, c(2, 3, 5)]
   
-
   profileDfContingent <- profileDfContingent %>%
   mutate(
     psychRegions = as.factor(psychRegions),
@@ -141,11 +176,7 @@ server <- function(session, input, output) {
     
     if(profileType == "profilecorr"){
       
-      output$profileconttable <- NULL
-      
-      output$profiletext <- NULL
-      
-      output$profilegraph <- NULL
+      clearProfile()
       
       output$profilegraph <- renderPlot(profileDfSubset %>%
                                           cor() %>%
@@ -158,24 +189,14 @@ server <- function(session, input, output) {
                                           ))
     } else if(profileType == "profilecont"){
       
-      output$profilegraph <- NULL
-      
-      output$profiletext <- NULL
-      
-      output$profileconttable <- NULL
+      clearProfile()
         
       output$profileconttable <- renderTable({as.data.frame.matrix(profileDfContingent)}, 
                                              include.rownames=TRUE)
       
-      print(class(profileDfContingent))
-      
     } else if(profileType == "profileboxplot"){
       
-      output$profilegraph <- NULL
-      
-      output$profiletext <- NULL
-      
-      output$profileconttable <- NULL
+      clearProfile()
       
       output$profilegraph <- renderPlot(profileDf %>%
                                           dplyr::select(entrepreneur) %>%
@@ -183,12 +204,6 @@ server <- function(session, input, output) {
                                           geom_boxplot(notch = TRUE) +  # Boxplot with CI
                                           coord_flip())
     } else if(profileType == "profilechi"){
-      
-      output$profilegraph <- NULL
-      
-      output$profiletext <- NULL
-      
-      output$profileconttable <- NULL
       
       profileSubset <- profileDf %>% dplyr::select(state_code, region, psychRegions) %>%
         mutate(
@@ -203,8 +218,20 @@ server <- function(session, input, output) {
       profilechi <- profileSubset %>% dplyr::select(region, psychRegions) %>%
         table() %>% chisq.test()
       
-      output$profiletext <- renderText({paste(profilechi, sep="\n")})
+      clearProfile()
       
+      output$profileconttable <- renderTable({as.data.frame.matrix(profilechi$observed)},
+                                             include.rownames=TRUE)
+      output$profilechiexpec <- renderTable({as.data.frame.matrix(profilechi$expected)},
+                                             include.rownames=TRUE)
+      output$profilechiresid <- renderTable({as.data.frame.matrix(profilechi$residuals)},
+                                             include.rownames=TRUE)
+
+      output$profilechiobservedtext <- renderText({paste("<b>", "Observed", "</b>")})
+      output$profilechiexpectext <- renderText({paste("<b>", "Expected", "</b>")})
+      output$profilechiresidtext <- renderText({paste("<b>", "Residuals", "</b>")})
+      
+      output$profiletext <- renderText({paste(profilechi, sep="\n")})
     }
   })
 }
