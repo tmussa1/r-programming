@@ -5,7 +5,9 @@ source("jaxmat.R")
 
 if (!require("pacman")) install.packages("pacman")
 
-pacman::p_load(corrplot, magrittr, pacman, psych, rio, tidyverse)
+pacman::p_load(corrplot, magrittr, pacman, 
+               psych, rio, tidyverse, GGally,
+               cluster, factoextra)
 
 stylesheet <- tags$head(tags$style(HTML('
     .main-header .logo {
@@ -51,13 +53,17 @@ body <- dashboardBody(
                                                          "Pairwise t Test for Personality Types (Psychology Regions) Vs Volunteering Search Word",
                                                          "Regression Line for Museum Vs Volunteering Search Words",
                                                          "Fitted Vs Residual Line for Volunteering Vs the Rest of Search Words",
+                                                         "Quantile Regression between Scrap Book and Modern Dance Search Words",
                                                          "Contingency Table between US Regions and Personality Type (Psychology Region)",
-                                                         "Chi-Square Test between US Regions and Personality Type (Psychology Region)"),
+                                                         "Chi-Square Test between US Regions and Personality Type (Psychology Region)",
+                                                         "Hierarchical Clustering for Regions"),
                                          choiceValues = c("profilecorr", "profilescatter",
                                                           "profileboxplotpsych", "profileboxplot",
                                                           "profilebarplot", "profiledensity",
                                                           "profileanova","profilepairwisettest", 
-                                                          "profileregression","profilefitted", "profilecont", "profilechi"
+                                                          "profileregression","profilefitted",
+                                                          "profilequantile", "profilecont", "profilechi",
+                                                          "profileclustering"
                                                           )),
                             actionBttn("profileanalyze","Analyze"),
                             br(),
@@ -370,6 +376,46 @@ server <- function(session, input, output) {
       output$profilegraph <- renderPlot(ggplot(profilefit, aes(x = .fitted, y = .resid)) +
         geom_point() +
         geom_smooth(method = loess, formula = y ~ x))
+      
+    } else if(profileType == "profilequantile"){
+      
+      clearProfile()
+      
+      profilequantile <- profileDf %>%
+        select(instagram:modernDance) %>% ggplot(aes(scrapbook, modernDance)) +
+        geom_point(size = 3) +
+        geom_smooth(  
+          method = lm, 
+          se = F          
+        ) +
+        geom_quantile(    
+          quantiles = 0.5,
+          color = "red",  
+          size = 1         
+        )
+      
+      output$profilegraph <- renderPlot(profilequantile)
+      
+    } else if(profileType == "profileclustering"){
+      
+      clearProfile()
+      
+      profileClustering <- profileDf %>%
+        select(
+          state_code, 
+          instagram:modernDance
+        ) %>%  dist %>% 
+        hclust %>T% plot(              
+          labels = df$state_code,  
+          hang = -1,              
+          cex = 0.6               
+        ) %>%
+        rect.hclust(
+          k = 5,            
+          border = 2:6      
+        )
+      
+      profileClustering
     }
   })
 }
