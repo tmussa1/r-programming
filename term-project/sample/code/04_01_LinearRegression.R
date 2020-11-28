@@ -67,7 +67,7 @@ fit1 %>% influence.measures()
 # 2: Normal Q-Q
 # 3: Scale-Location
 # 4: Residuals vs. Leverage
-fit1 %>% plot()
+fit1 %>% plot() 
 
 # MULTIPLE REGRESSION ######################################
 
@@ -105,6 +105,12 @@ fit2 %>% summary()
 
 # Confidence intervals for coefficients
 fit2 %>% confint()
+
+fit2 %>% plot() %>% fitted.values()
+
+ggplot(fit2, aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_smooth(method = loess, formula = y ~ x) 
 
 # Can also get predicted values of "volunteering,"
 # prediction intervals, and regression diagnostics using

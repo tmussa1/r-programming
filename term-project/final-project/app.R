@@ -16,7 +16,7 @@ stylesheet <- tags$head(tags$style(HTML('
   ')
 ))
 
-header <- dashboardHeader(title = "Data Analysis with Few Datasets and Techniques",
+header <- dashboardHeader(title = "Data Analysis Techniques",
                           titleWidth = 500)
 
 sidebar <- dashboardSidebar(width = 250,
@@ -42,18 +42,22 @@ body <- dashboardBody(
                             radioButtons("profileanalysis", "Types of Analysis",
                                          choiceNames = c(
                                                          "Correlation Graph between Different Google Search Words",
-                                                         "Box plot for Personality Types (Psychology Regions) Vs Volunteering Search Word",
-                                                         "Box plot for Entrepreneurship Search Word",
-                                                         "Bar plot for Count of Personality Types (Psychology Regions)", 
-                                                         "Density plot for Personality Types (Psychology Regions) Vs Volunteering Search Word",
+                                                         "Scatter Plot Matrix between all Search Words (This will take a minute to load)",
+                                                         "Box Plot for Personality Types (Psychology Regions) Vs Volunteering Search Word",
+                                                         "Box Plot for Entrepreneurship Search Word",
+                                                         "Bar Plot for Count of Personality Types (Psychology Regions)", 
+                                                         "Density Plot for Personality Types (Psychology Regions) Vs Volunteering Search Word",
                                                          "One-way Analysis of Variance for Personality Types (Psychology Regions) Vs Volunteering Search Word",
                                                          "Pairwise t Test for Personality Types (Psychology Regions) Vs Volunteering Search Word",
+                                                         "Regression Line for Museum Vs Volunteering Search Words",
+                                                         "Fitted Vs Residual Line for Volunteering Vs the Rest of Search Words",
                                                          "Contingency Table between US Regions and Personality Type (Psychology Region)",
                                                          "Chi-Square Test between US Regions and Personality Type (Psychology Region)"),
-                                         choiceValues = c("profilecorr",
+                                         choiceValues = c("profilecorr", "profilescatter",
                                                           "profileboxplotpsych", "profileboxplot",
                                                           "profilebarplot", "profiledensity",
-                                                          "profileanova","profilepairwisettest", "profilecont", "profilechi"
+                                                          "profileanova","profilepairwisettest", 
+                                                          "profileregression","profilefitted", "profilecont", "profilechi"
                                                           )),
                             actionBttn("profileanalyze","Analyze"),
                             br(),
@@ -329,6 +333,43 @@ server <- function(session, input, output) {
       clearProfile()
       
       output$profiletext <- renderText({paste(profileAnovaPairwise, sep="\n")})
+      
+    } else if(profileType == "profilescatter"){
+      
+      profileScatter <- profileDf  %>%
+        dplyr::select(instagram:modernDance) %>% ggpairs()
+      
+      clearProfile()
+      
+      output$profilegraph <- renderPlot(profileScatter)
+      
+    } else if(profileType == "profileregression") {
+      
+      prfileRegress <- profileDf %>% 
+        ggplot(aes(museum, volunteering)) +
+        geom_point(size = 3) +
+        geom_smooth(method = lm)
+      
+      clearProfile()
+      
+      output$profilegraph <- renderPlot(prfileRegress)
+      
+    } else if(profileType == "profilefitted"){
+      
+      clearProfile()
+      
+      profilefit <- profileDf %>% 
+        dplyr::select(instagram:modernDance) %>% 
+        dplyr::select(
+          volunteering, 
+          everything()
+        ) 
+      
+      profilefit <- profilefit %>% lm()
+      
+      output$profilegraph <- renderPlot(ggplot(profilefit, aes(x = .fitted, y = .resid)) +
+        geom_point() +
+        geom_smooth(method = loess, formula = y ~ x))
     }
   })
 }
