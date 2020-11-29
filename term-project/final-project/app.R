@@ -23,9 +23,9 @@ header <- dashboardHeader(title = "Data Analysis Techniques",
 
 sidebar <- dashboardSidebar(width = 250,
                             sidebarMenu(id="menu",
-                                        menuItem("Personality Profiles in US States", tabName = "profile"),
-                                        menuItem("Deaths from Lung Diseases", tabName = "lung"),
-                                        menuItem("Deaths of Car Drivers", tabName = "car")
+                                        menuItem("Personality Profiles in US States", tabName = "profile")
+                                        # menuItem("Deaths from Lung Diseases", tabName = "lung"),
+                                        # menuItem("Deaths of Car Drivers", tabName = "car")
                             )
                             
 )
@@ -55,15 +55,14 @@ body <- dashboardBody(
                                                          "Fitted Vs Residual Line for Volunteering Vs the Rest of Search Words",
                                                          "Quantile Regression between Scrap Book and Modern Dance Search Words",
                                                          "Contingency Table between US Regions and Personality Type (Psychology Region)",
-                                                         "Chi-Square Test between US Regions and Personality Type (Psychology Region)",
-                                                         "Hierarchical Clustering for Regions"),
+                                                         "Chi-Square Test between US Regions and Personality Type (Psychology Region)"
+                                                          ),
                                          choiceValues = c("profilecorr", "profilescatter",
                                                           "profileboxplotpsych", "profileboxplot",
                                                           "profilebarplot", "profiledensity",
                                                           "profileanova","profilepairwisettest", 
                                                           "profileregression","profilefitted",
-                                                          "profilequantile", "profilecont", "profilechi",
-                                                          "profileclustering"
+                                                          "profilequantile", "profilecont", "profilechi"
                                                           )),
                             actionBttn("profileanalyze","Analyze"),
                             br(),
@@ -109,13 +108,14 @@ body <- dashboardBody(
                         )
             )
             
-    ),
-    tabItem(tabName = "lung",
-            h2("Monthly Deaths from Lung Diseases in the UK between 1974-1979 (72 Months)")
-    ),
-    tabItem(tabName = "car",
-            h2("Deaths of Car Drivers in Great Britain 1969-84 (192 months)"),
     )
+    # ,
+    # tabItem(tabName = "lung",
+    #         h2("Monthly Deaths from Lung Diseases in the UK between 1974-1979 (72 Months)")
+    # ),
+    # tabItem(tabName = "car",
+    #         h2("Deaths of Car Drivers in Great Britain 1969-84 (192 months)"),
+    # )
   )
 )
 ui <- dashboardPage(header, sidebar, body, skin = "green") #other colors available
@@ -382,7 +382,7 @@ server <- function(session, input, output) {
       clearProfile()
       
       profilequantile <- profileDf %>%
-        select(instagram:modernDance) %>% ggplot(aes(scrapbook, modernDance)) +
+        dplyr::select(instagram:modernDance) %>% ggplot(aes(scrapbook, modernDance)) +
         geom_point(size = 3) +
         geom_smooth(  
           method = lm, 
@@ -396,26 +396,6 @@ server <- function(session, input, output) {
       
       output$profilegraph <- renderPlot(profilequantile)
       
-    } else if(profileType == "profileclustering"){
-      
-      clearProfile()
-      
-      profileClustering <- profileDf %>%
-        select(
-          state_code, 
-          instagram:modernDance
-        ) %>%  dist %>% 
-        hclust %>T% plot(              
-          labels = df$state_code,  
-          hang = -1,              
-          cex = 0.6               
-        ) %>%
-        rect.hclust(
-          k = 5,            
-          border = 2:6      
-        )
-      
-      profileClustering
     }
   })
 }
