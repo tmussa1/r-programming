@@ -1,13 +1,16 @@
+options(repos='http://cran.rstudio.com/')
 library(shiny)
-library(shinydashboard)
+library(shinydashboard, warn.conflicts = FALSE)
 library(shinyWidgets)
+library(pacman)
+library(corrplot)
+library(magrittr)
+library(psych)
+library(rio)
+library(tidyverse)
+library(GGally)
+library(factoextra)
 source("jaxmat.R")
-
-if (!require("pacman")) install.packages("pacman")
-
-pacman::p_load(corrplot, magrittr, pacman, 
-               psych, rio, tidyverse, GGally,
-               cluster, factoextra)
 
 stylesheet <- tags$head(tags$style(HTML('
     .main-header .logo {

@@ -1,0 +1,13 @@
+name: final-project
+title: final-project
+username:
+account: tofikmussa
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 3317218
+bundleId: 3917519
+url: https://tofikmussa.shinyapps.io/final-project/
+when: 1606611928.3906
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: .RData
