@@ -92,11 +92,11 @@ Euler.displayGraph <- function(vertices, edges, edgecolors) {
   }
 }
 
-Euler.findClosestVertex <- function(vertices,x,y){
+Euler.findClosestVertexNew <- function(vertices,x,y){
   n <- nrow(vertices)
   distsq <- numeric(n)
   for (i in 1:n){
-    distsq[i] <- (vertices[i,1]-x)^2+(vertices[i,2]-y)^2
+    distsq[i] <- (vertices[i,2]-x)^2+(vertices[i,3]-y)^2
   }
   k <- which(distsq == min(distsq))
   stopifnot(length(k)==1)
