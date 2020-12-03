@@ -34,6 +34,10 @@ body <- dashboardBody(
            br(),
            br(),
            br(),
+           actionBttn("eulerianbtn","Perform Eulerian Walk"),
+           br(),
+           br(),
+           br(),
            actionBttn("resetbtn","Clear"),
     ),
     column(width = 6,
@@ -58,10 +62,11 @@ makeVertexDF <- function() {
 
 
 makeEdgeDF <- function() {
-  DF <- data.frame(V1 = character(15), V2 = character(15), color = character(15))
-  DF$V1 <- c("RGP","RYB","YGP","RGB","YBP","RGP","RYB","YGP","RGB","YBP","RYP","RYG","YGB","BGP","RBP")
-  DF$V2 <- c("RYB","YGP","RGB","YBP","RGP","YGB","BGP","RBP","RYP","RYG","YGB","BGP","RBP","RYP","RYG")
-  DF$color <- c("red","orange","green","blue","purple","green","blue","purple","red","orange","orange","green","blue","purple","red")
+  DF <- data.frame(V1 = character(20), V2 = character(20), color = character(20))
+  DF$V1 <- c("RGP","RYB","YGP","RGB","YBP","RGP","RYB","YGP","RGB","YBP","RYP","RYG","YGB","BGP","RBP", "RGP", "YBP", "RGB", "YGP", "RYB")
+  DF$V2 <- c("RYB","YGP","RGB","YBP","RGP","YGB","BGP","RBP","RYP","RYG","YGB","BGP","RBP","RYP","RYG", "RYG", "RYP", "RBP", "BGP", "YGB")
+  DF$color <- c("red","orange","green","blue","purple","green","blue","purple","red","orange","orange","green",
+                "blue","purple","red", "black", "black", "black", "black", "black")
   return(DF)
 }
 
@@ -72,7 +77,7 @@ server <- function(session, input, output) {
     text(DF$x,DF$y,DF$V, cex = 1.5)
   }
   plotEdges <- function(vDF,eDF) {
-    for (i in 1:15){
+    for (i in 1:20){
       v1 <- eDF[i,1]
       v2 <- eDF[i,2]
       color <- eDF[i,3]
@@ -83,13 +88,37 @@ server <- function(session, input, output) {
       segments(x1,y1,x2,y2,col = color, lwd = 2)
     }
   }
+  
+  plotEdgesNew <- function(vDF,eDF, k) {
+    for (i in 1:20){
+      v1 <- eDF[i,1]
+      v2 <- eDF[i,2]
+      color <- eDF[i,3]
+      x1 <- vDF[which.max(vDF$V == v1),2]
+      y1 <- vDF[which.max(vDF$V == v1),3]
+      x2 <- vDF[which.max(vDF$V == v2),2]
+      y2 <- vDF[which.max(vDF$V == v2),3]
+      
+      if(i %in% k){
+        segments(x1,y1,x2,y2,col = color, lwd = 2, lty = 2)
+      } else {
+        segments(x1,y1,x2,y2,col = color, lwd = 2)
+      }
+    }
+  }
+  
   PeteDF <- makeVertexDF()
   edgeDF <- makeEdgeDF()
   choosenColor <- c()
+  edgecolors <- rep("not seen", 20)
   performHamiltonian <- FALSE
+  performEulerian <- FALSE
+  walkList <- numeric(0)
+  seen <- c()
   
   output$vertex <- renderTable(PeteDF)
   output$edge <- renderTable(edgeDF)
+  
   output$plot1 <- renderPlot({
     plotVertices(PeteDF)
     plotEdges(PeteDF,edgeDF)
@@ -116,17 +145,61 @@ server <- function(session, input, output) {
     
     v <- Euler.findClosestVertexNew(PeteDF,input$plot_click$x,input$plot_click$y)
     
-    if(performHamiltonian == FALSE){
-      
-      PeteDF[v, 4] <<- choosenColor
+    if(performHamiltonian == TRUE){
+  
+      PeteDF[v, 4] <<- "red"
       
       output$plot1 <- renderPlot({
         plotVertices(PeteDF)
         plotEdges(PeteDF,edgeDF)
       })
+      
+      
+    } else if(performEulerian == TRUE){
+      
+      if (length(walkList) == 0) {  
+        walkList <<- v
+        return()
+      }
+ 
+      
+      edge <- sort(c(v,tail(walkList,1)))
+      
+      len <- length(edgeDF$V1)
+      
+      k <<- 0
+      
+      for(e in (1:len)){
+
+        if((edgeDF$V1[e] == PeteDF$V[v] && edgeDF$V2[e] == PeteDF$V[tail(walkList,1)]) ||
+           (edgeDF$V2[e] == PeteDF$V[v] && edgeDF$V1[e] == PeteDF$V[tail(walkList,1)])){
+          k <<- e
+        }
+        
+      }
+
+
+      if (k==0)
+        return()
+      
+
+      if (edgecolors[k] == "seen")
+        return()
+
+      walkList <<- c(walkList,v)
+
+      edgecolors[k] <<- "seen"
+      
+      seen <<- c(seen, k)
+      
+      output$plot1 <- renderPlot({
+        plotVertices(PeteDF)
+        plotEdgesNew(PeteDF,edgeDF, seen)
+      })
+    
     } else {
       
-      PeteDF[v, 4] <<- "red"
+      PeteDF[v, 4] <<- choosenColor
       
       output$plot1 <- renderPlot({
         plotVertices(PeteDF)
@@ -142,8 +215,17 @@ server <- function(session, input, output) {
     performHamiltonian <<- TRUE
   })
   
+  
+  observeEvent(input$eulerianbtn, {
+    performEulerian <<- TRUE
+  })
+  
   observeEvent(input$resetbtn, {
+    
     PeteDF$bg <<- "white"
+    
+    performHamiltonian <<- FALSE
+    performEulerian <<- FALSE
     
     output$plot1 <- renderPlot({
       plotVertices(PeteDF)

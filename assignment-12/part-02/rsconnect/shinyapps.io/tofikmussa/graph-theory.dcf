@@ -1,0 +1,12 @@
+name: graph-theory
+title: graph-theory
+username:
+account: tofikmussa
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 3342260
+bundleId: 3935940
+url: https://tofikmussa.shinyapps.io/graph-theory/
+when: 1606961137.30572
+asMultiple: FALSE
+asStatic: FALSE

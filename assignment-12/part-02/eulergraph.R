@@ -75,7 +75,7 @@ Euler.placeVertices <- function(nVert){
   return(vertices)
 }
 
-Euler.displayGraph <- function(vertices, edges, edgecolors) {
+Euler.displayGraphNew <- function(vertices, edges, k) {
   par(mar=c(0.1,0.1,0.1,0.1))  #don't waste space on margins
   #Find the largest coordinate
   size <- max(c(abs(vertices$x),abs(vertices$y)))
@@ -88,7 +88,13 @@ Euler.displayGraph <- function(vertices, edges, edgecolors) {
   for (i in 1:nrow(edges)){
     v1 <- edges[i,1]
     v2 <- edges[i,2]
-    segments(vertices$x[v1],vertices$y[v1],vertices$x[v2],vertices$y[v2],col = edgecolors[i],lwd = 2)
+    
+    if(i == k){
+      segments(vertices$x[v1],vertices$y[v1],vertices$x[v2],vertices$y[v2],col = "black",lwd = 2, lty = 2)
+    } else {
+      segments(vertices$x[v1],vertices$y[v1],vertices$x[v2],vertices$y[v2],col = "black",lwd = 2)
+    }
+    
   }
 }
 

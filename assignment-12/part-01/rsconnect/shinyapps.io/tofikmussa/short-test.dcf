@@ -1,0 +1,12 @@
+name: short-test
+title: short-test
+username:
+account: tofikmussa
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 3342828
+bundleId: 3936405
+url: https://tofikmussa.shinyapps.io/short-test/
+when: 1606969191.64849
+asMultiple: FALSE
+asStatic: FALSE
