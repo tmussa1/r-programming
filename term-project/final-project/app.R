@@ -35,7 +35,7 @@ sidebar <- dashboardSidebar(width = 250,
 body <- dashboardBody(
   tabItems(
     tabItem(tabName = "profile",
-            h2("Data Collected from 48 US States"),
+            h2("Data Collected from 48 US States to Predict Personality Profiles Based on Most Popular Google Search Words"),
             tags$ul(
               tags$li(HTML(paste0("<b>", "Geographical Data" , "</b>", "- common name of the states and their regions"))),
               tags$li(HTML(paste0("<b>", "Politcal Data" , "</b>", "- whether the state's governor is a Republican or a Democrat"))),
@@ -58,14 +58,15 @@ body <- dashboardBody(
                                                          "Fitted Vs Residual Line for Volunteering Vs the Rest of Search Words",
                                                          "Quantile Regression between Scrap Book and Modern Dance Search Words",
                                                          "Contingency Table between US Regions and Personality Type (Psychology Region)",
-                                                         "Chi-Square Test between US Regions and Personality Type (Psychology Region)"
+                                                         "Chi-Square Test between US Regions and Personality Type (Psychology Region)",
+                                                         "Hierarchical Clustering"
                                                           ),
                                          choiceValues = c("profilecorr", "profilescatter",
                                                           "profileboxplotpsych", "profileboxplot",
                                                           "profilebarplot", "profiledensity",
                                                           "profileanova","profilepairwisettest", 
                                                           "profileregression","profilefitted",
-                                                          "profilequantile", "profilecont", "profilechi"
+                                                          "profilequantile", "profilecont", "profilechi", "profilehier"
                                                           )),
                             actionBttn("profileanalyze","Analyze"),
                             br(),
@@ -399,6 +400,35 @@ server <- function(session, input, output) {
       
       output$profilegraph <- renderPlot(profilequantile)
       
+    }
+    else if(profileType == "profilehier"){
+      
+      clearProfile()
+      
+      profilehier <- profileDf %>%
+        dplyr::select(
+          state_code, 
+          instagram:modernDance
+        )
+      
+      hc <- profilehier %>%
+        dist %>%
+        hclust 
+      
+      output$profilegraph <- renderPlot({
+        
+        hc %>% plot(              
+          labels = df$state_code,
+          hang = -1,          
+          cex = 0.6   
+        )
+        
+        hc %>% rect.hclust( 
+          k = 5,          
+          border = 2:6
+        )
+        
+      })
     }
   })
 }

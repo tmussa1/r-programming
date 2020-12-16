@@ -1,0 +1,2 @@
+Predicts personality types of people in US regions and states based on people's most popular Google search words
+

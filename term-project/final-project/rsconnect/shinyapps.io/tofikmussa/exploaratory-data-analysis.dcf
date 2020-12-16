@@ -1,0 +1,13 @@
+name: exploaratory-data-analysis
+title: exploaratory-data-analysis
+username:
+account: tofikmussa
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 3409002
+bundleId: 3997898
+url: https://tofikmussa.shinyapps.io/exploaratory-data-analysis/
+when: 1608141125.5916
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: explanation.txt
